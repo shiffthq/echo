@@ -13,8 +13,8 @@ func assertEqual(t *testing.T, actual interface{}, expected interface{}) {
 }
 
 func TestMain(t *testing.T) {
-	go startTCPServer()
-	go startUDPServer()
+	go startTCPServer(8080)
+	go startUDPServer(8080)
 }
 
 func TestTCPEcho(t *testing.T) {

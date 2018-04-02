@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"io"
 	"log"
 	"net"
@@ -10,10 +11,8 @@ import (
 	"unicode/utf8"
 )
 
-const defaultListenPort = 8080
-
-func startTCPServer() {
-	ln, err := net.Listen("tcp", ":"+strconv.Itoa(defaultListenPort))
+func startTCPServer(port int) {
+	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		log.Fatalf("listen fail, err=%s", err)
 	}
@@ -57,8 +56,8 @@ func handleTCPConnection(conn net.Conn) {
 	}
 }
 
-func startUDPServer() {
-	addr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(defaultListenPort))
+func startUDPServer(port int) {
+	addr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(port))
 	if err != nil {
 		log.Fatalf("ResolveUDPAddr fail, err=%s", err)
 	}
@@ -93,10 +92,13 @@ func handleUDPConnection(conn *net.UDPConn) {
 }
 
 func main() {
+	port := flag.Int("port", 8080, "listen port")
+	flag.Parse()
+
 	log.Printf("Start with pid: %d", os.Getpid())
 
-	go startTCPServer()
-	go startUDPServer()
+	go startTCPServer(*port)
+	go startUDPServer(*port)
 
 	ch := make(chan error)
 	<-ch
